@@ -82,7 +82,16 @@ StereoKitTest/
 The app displays real-time hand tracking status and pinch detection:
 - Right/Left hand tracking status
 - Device information
-- Pinch gesture detection (threshold: 0.5)
+- Pinch gesture detection (threshold: 0.7 for start, 0.3 for release)
+
+### Microphone Recording Integration (MAN-12)
+The app includes comprehensive microphone recording capabilities:
+- **Pinch-to-Record**: Right-hand pinch gesture starts/stops audio recording
+- **Speech Recognition Quality**: 16kHz mono audio optimized for speech recognition
+- **Real-time Feedback**: Audio intensity monitoring during recording
+- **Edge Case Handling**: Prevents rapid pinch repeats, limits long recordings (5 min max)
+- **Memory Management**: Audio stored in memory ready for upload to speech services
+- **Permission Management**: Runtime microphone permission checking
 
 ### Quest 3 Permissions
 Pre-configured in `AndroidManifest.xml`:
@@ -100,8 +109,8 @@ Optimized for Quest 3 with:
 ## Development Roadmap
 
 This project serves as the foundation for:
-1. **MAN-11**: Pinch gesture detection implementation
-2. **MAN-12**: Microphone recording workflow
+1. ✅ **MAN-11**: Pinch gesture detection implementation
+2. ✅ **MAN-12**: Microphone recording workflow
 3. **MAN-13**: Camera picture capture
 4. **MAN-14**: Gemini API integration
 5. **MAN-15**: ElevenLabs TTS integration
