@@ -511,10 +511,34 @@ class Program
 		{
 			appName = "StereoKitQuest3",
 			assetsFolder = "Assets",
-			mode = AppMode.XR
+			mode = AppMode.XR,
+			blendPreference = DisplayBlend.AnyTransparent,  // Enable passthrough
+			overlayApp = false,  // Ensure we're not in overlay mode
+			overlayPriority = 0
 		};
+		
+		Log.Info("Initializing StereoKit with passthrough settings...");
 		if (!SK.Initialize(settings))
+		{
+			Log.Err("Failed to initialize StereoKit!");
 			return;
+		}
+		
+		Log.Info($"StereoKit initialized. Device: {Device.Name}, DisplayBlend: {Device.DisplayBlend}");
+		
+		// Force clear color to transparent for passthrough
+		Renderer.ClearColor = new Color(0, 0, 0, 0);  // Transparent black
+		
+		// Log passthrough capability
+		Log.Info($"Display blend mode: {Device.DisplayBlend}");
+		if (Device.DisplayBlend != DisplayBlend.Opaque)
+		{
+			Log.Info("Passthrough should be active!");
+		}
+		else
+		{
+			Log.Warn("Device is in opaque mode - passthrough not available");
+		}
 
 		// Log hand tracking availability
 		Log.Info("Hand tracking setup - ensure permissions are granted in device settings");
@@ -552,6 +576,13 @@ class Program
 			_recordingWorkflow.Update();
 			_microphoneRecorder.Update();
 			
+			// Debug: Log display blend mode on first few frames
+			if (Time.Totalf < 2.0f)  // Log for first 2 seconds
+			{
+				Log.Info($"Time {Time.Totalf:F1}s: DisplayBlend = {Device.DisplayBlend}");
+			}
+			
+			// Only render floor in opaque mode (PC/simulator)
 			if (Device.DisplayBlend == DisplayBlend.Opaque)
 				Mesh.Cube.Draw(floorMaterial, floorTransform);
 
