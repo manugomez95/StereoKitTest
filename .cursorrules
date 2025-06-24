@@ -4,36 +4,51 @@
 
 ### 1. Starting Work on a Linear Issue
 1. **Fetch issue details**: Use Linear integration to get issue ID (e.g., MAN-11)
-2. **Create branch**: Use the Linear-suggested branch name format: `username/issue-id-description`
-   ```bash
-   git checkout -b manuelgomez611/man-11-implement-pinch-gesture-detection-with-stereokit-hand
-   ```
-3. **Update issue status**: Linear should auto-move to "In Progress" when branch is created (if Git automation is enabled)
+2. **Create branch**: Use Linear-suggested branch name format
+3. **Update issue status**: Linear auto-moves to "In Progress" when branch is created
 
 ### 2. Development Process
 1. **Implement features** according to Linear issue description
 2. **Test on Quest 3** when applicable (especially hand tracking features)
-3. **Update Linear issue** with progress comments using Linear integration
-4. **Commit with detailed messages** including issue reference
+3. **Commit with detailed messages** including issue reference
 
 ### 3. Commit Message Format
 ```
 Brief description for ISSUE-ID
 
-- Detailed bullet points of what was implemented
-- Key technical decisions and optimizations
-- Quest 3 specific considerations if applicable
+- Key implementation details
+- Technical decisions and optimizations
+- Quest 3 considerations if applicable
 
 Addresses ISSUE-ID: Original issue title
 ```
 
 ### 4. Completing Work
 1. **Push branch** to origin
-2. **Create Pull Request** with:
-   - Reference to Linear issue in title: `[MAN-11] Implement pinch gesture detection`
-   - Detailed description linking back to Linear issue
-   - Testing notes for Quest 3 if applicable
-3. **Linear should auto-move** to "Done" when PR is merged (if automation enabled)
+2. **Create Pull Request** with Linear issue reference in title
+3. **IMPORTANT**: Do NOT comment "completed" on Linear issues until PR is merged
+4. **Linear auto-moves** to "Done" when PR is merged (if automation enabled)
+
+## StereoKit Guidelines
+
+### Hand Tracking Features
+- Test on Quest 3 for reliability
+- Use hysteresis for gesture detection (0.7+ start, 0.3 release)
+- Implement proper state management and UI feedback
+
+### Event Systems
+- Use proper C# event patterns with helper methods for invocation
+- Implement cleanup in dispose patterns when needed
+
+## Linear Team Configuration
+
+### Git Automations Required
+- ✅ Move issue to "In Progress" when branch is created
+- ✅ Move issue to "Done" when PR is merged
+- ✅ Add PR link to issue when created
+
+### Branch Naming
+- Use Linear's suggested branch names: `username/issue-id-description`
 
 ## StereoKit Specific Guidelines
 
@@ -52,18 +67,6 @@ Addresses ISSUE-ID: Original issue title
 - Higher thresholds for gesture detection (0.7+ for pinch start)
 - Lower release thresholds (0.3) to prevent premature releases
 - Account for hand tracking latency and noise
-
-## Linear Team Configuration Required
-
-### Git Automations (Team Settings → Git → Automations)
-- ✅ Move issue to "In Progress" when branch is created
-- ✅ Move issue to "Done" when PR is merged
-- ✅ Add PR link to issue when created
-- ✅ Sync PR status with issue status
-
-### Branch Naming
-- Use Linear's suggested branch names
-- Format: `username/issue-id-kebab-case-description`
 
 ## Tools Integration
 - Use Linear MCP for issue management
