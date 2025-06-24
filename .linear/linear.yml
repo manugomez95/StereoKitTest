@@ -1,0 +1,15 @@
+# Linear GitHub integration configuration
+version: 1
+
+# Configure which branches to sync with Linear
+branchPrefix: "LIN"
+gitBranchPattern: "{{prefix}}-{{id}}/{{title}}"
+
+# Configure Linear issue states to sync with GitHub PR states
+statuses:
+  - name: "In Progress"
+    githubStatus: "open"
+  - name: "Done"
+    githubStatus: "merged"
+  - name: "Canceled"
+    githubStatus: "closed" 
