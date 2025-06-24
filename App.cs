@@ -9,6 +9,7 @@ public class App
 {
 	private PinchGestureDetector _pinchDetector;
 	private RecordingWorkflow _recordingWorkflow;
+	private PassthroughFBExt _passthroughStepper;
 	
 	// UI state
 	private Pose _windowPose = new Pose(0, 1.5f, -0.5f, Quat.LookDir(0, 0, 1));
@@ -19,6 +20,11 @@ public class App
 	
 	public void Initialize()
 	{
+		// Add passthrough stepper BEFORE initializing StereoKit
+		Log.Info("MAN-27: Adding PassthroughFBExt stepper...");
+		_passthroughStepper = SK.AddStepper(new PassthroughFBExt());
+		Log.Info("MAN-27: PassthroughFBExt stepper added successfully");
+		
 		// Initialize StereoKit with Quest 3 optimized settings
 		SKSettings settings = new SKSettings
 		{
@@ -27,8 +33,34 @@ public class App
 			mode = AppMode.XR
 		};
 		
+		Log.Info("MAN-27: Initializing StereoKit...");
 		if (!SK.Initialize(settings))
 			throw new InvalidOperationException("Failed to initialize StereoKit");
+		Log.Info("MAN-27: StereoKit initialized successfully");
+
+		// Log backend information
+		Log.Info($"MAN-27: Backend XR Type: {Backend.XRType}");
+		Log.Info($"MAN-27: Device Name: {Device.Name}");
+		Log.Info($"MAN-27: Display Blend: {Device.DisplayBlend}");
+
+		// Enable passthrough AFTER StereoKit is initialized
+		Log.Info("MAN-27: Checking passthrough availability...");
+		if (_passthroughStepper.Available)
+		{
+			Log.Info("MAN-27: Passthrough extension is available, enabling...");
+			_passthroughStepper.EnabledPassthrough = true;
+			Log.Info($"MAN-27: Passthrough enabled status: {_passthroughStepper.EnabledPassthrough}");
+		}
+		else
+		{
+			Log.Warn("MAN-27: Passthrough extension not available");
+			Log.Info($"MAN-27: Backend XR Type: {Backend.XRType}");
+			if (Backend.XRType == BackendXRType.OpenXR)
+			{
+				bool extEnabled = Backend.OpenXR.ExtEnabled("XR_FB_passthrough");
+				Log.Info($"MAN-27: XR_FB_passthrough extension enabled: {extEnabled}");
+			}
+		}
 
 		// Log hand tracking availability
 		Log.Info("Hand tracking setup - ensure permissions are granted in device settings");
@@ -84,9 +116,21 @@ public class App
 		UI.Label($"Right Hand: {(rightHand.IsTracked ? "Tracked" : "Not Tracked")}");
 		UI.Label($"Left Hand: {(leftHand.IsTracked ? "Tracked" : "Not Tracked")}");
 		
-		// Display device info
+		// Display device info and passthrough status
 		UI.Label($"Device: {Device.Name}");
-		UI.Label($"Display: {Device.DisplayBlend}");
+		
+		// Enhanced passthrough status display
+		if (_passthroughStepper != null && _passthroughStepper.Available)
+		{
+			bool passthroughActive = _passthroughStepper.EnabledPassthrough;
+			UI.Label($"Passthrough: {(passthroughActive ? "ENABLED" : "Disabled")}");
+			UI.Label($"Display Mode: {Device.DisplayBlend}");
+		}
+		else
+		{
+			UI.Label($"Passthrough: Not Available");
+			UI.Label($"Display Mode: {Device.DisplayBlend}");
+		}
 	}
 	
 	private void RenderPinchGestureUI()
