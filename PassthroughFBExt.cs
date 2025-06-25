@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using StereoKit;
 using StereoKit.Framework;
 
-namespace StereoKitQuest3;
+namespace StereoKit.Framework;
 
 public class PassthroughFBExt : IStepper
 {
@@ -73,12 +73,12 @@ public class PassthroughFBExt : IStepper
 		oldSky   = Renderer.EnableSky;
 
 		XrResult result = xrCreatePassthroughFB(
-			Backend.OpenXR.Session,
+			(IntPtr)Backend.OpenXR.Session,
 			new XrPassthroughCreateInfoFB(XrPassthroughFlagsFB.IS_RUNNING_AT_CREATION_BIT_FB),
 			out activePassthrough);
 
 		result = xrCreatePassthroughLayerFB(
-			Backend.OpenXR.Session,
+			(IntPtr)Backend.OpenXR.Session,
 			new XrPassthroughLayerCreateInfoFB(activePassthrough, XrPassthroughFlagsFB.IS_RUNNING_AT_CREATION_BIT_FB, XrPassthroughLayerPurposeFB.RECONSTRUCTION_FB),
 			out activeLayer);
 
@@ -188,28 +188,29 @@ public class PassthroughFBExt : IStepper
 	{
 		public XrStructureType             type;
 		public IntPtr                      next;
-		public XrCompositionLayerFlags     flags;
-		public ulong                       space;
+		public XrCompositionLayerFlags     layerFlags;
+		public IntPtr                      space;
 		public XrPassthroughLayerFB        layerHandle;
-		public XrCompositionLayerPassthroughFB(XrCompositionLayerFlags flags, XrPassthroughLayerFB layerHandle)
+
+		public XrCompositionLayerPassthroughFB(XrCompositionLayerFlags layerFlags, XrPassthroughLayerFB layerHandle)
 		{
 			type = XrStructureType.XR_TYPE_COMPOSITION_LAYER_PASSTHROUGH_FB;
 			next = IntPtr.Zero;
-			space = 0;
-			this.flags = flags;
+			this.layerFlags  = layerFlags;
+			this.space       = IntPtr.Zero;
 			this.layerHandle = layerHandle;
 		}
 	}
 
-	delegate XrResult del_xrCreatePassthroughFB       (ulong session, [In] XrPassthroughCreateInfoFB createInfo, out XrPassthroughFB outPassthrough);
-	delegate XrResult del_xrDestroyPassthroughFB      (XrPassthroughFB passthrough);
-	delegate XrResult del_xrPassthroughStartFB        (XrPassthroughFB passthrough);
-	delegate XrResult del_xrPassthroughPauseFB        (XrPassthroughFB passthrough);
-	delegate XrResult del_xrCreatePassthroughLayerFB  (ulong session, [In] XrPassthroughLayerCreateInfoFB createInfo, out XrPassthroughLayerFB outLayer);
-	delegate XrResult del_xrDestroyPassthroughLayerFB (XrPassthroughLayerFB layer);
-	delegate XrResult del_xrPassthroughLayerPauseFB   (XrPassthroughLayerFB layer);
-	delegate XrResult del_xrPassthroughLayerResumeFB  (XrPassthroughLayerFB layer);
-	delegate XrResult del_xrPassthroughLayerSetStyleFB(XrPassthroughLayerFB layer, [In] XrPassthroughStyleFB style);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrCreatePassthroughFB       (IntPtr session, in XrPassthroughCreateInfoFB createInfo, out XrPassthroughFB passthrough);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrDestroyPassthroughFB      (XrPassthroughFB passthrough);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrPassthroughStartFB        (XrPassthroughFB passthrough);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrPassthroughPauseFB        (XrPassthroughFB passthrough);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrCreatePassthroughLayerFB  (IntPtr session, in XrPassthroughLayerCreateInfoFB createInfo, out XrPassthroughLayerFB layer);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrDestroyPassthroughLayerFB (XrPassthroughLayerFB layer);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrPassthroughLayerPauseFB   (XrPassthroughLayerFB layer);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrPassthroughLayerResumeFB  (XrPassthroughLayerFB layer);
+	[UnmanagedFunctionPointer(CallingConvention.Cdecl)] delegate XrResult del_xrPassthroughLayerSetStyleFB(XrPassthroughLayerFB layer, in XrPassthroughStyleFB style);
 
 	del_xrCreatePassthroughFB        xrCreatePassthroughFB;
 	del_xrDestroyPassthroughFB       xrDestroyPassthroughFB;

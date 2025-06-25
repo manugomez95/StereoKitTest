@@ -12,7 +12,8 @@ class Program
 		try
 		{
 			app.Initialize();
-			app.Run();
+			SK.Run(app.Update);
+			app.Shutdown();
 		}
 		catch (Exception ex)
 		{
